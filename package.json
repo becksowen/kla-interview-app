@@ -1,8 +1,0 @@
-{
-  "name": "kla-interview-functions",
-  "version": "1.0.0",
-  "description": "Netlify serverless functions for KLA Interview App",
-  "dependencies": {
-    "googleapis": "^140.0.0"
-  }
-}
