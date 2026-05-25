@@ -228,6 +228,7 @@ header{background:#185FA5;color:#fff;padding:14px 24px;display:flex;align-items:
       </div>
       <p style="font-size:22px;font-weight:600;margin-bottom:8px">Interview submitted!</p>
       <p style="font-size:14px;color:#555;margin-bottom:1rem">Well done, <span id="done-name" style="font-weight:600;color:#185FA5"></span>.</p>
+      <div id="upload-error-box" style="display:none;background:#FCEBEB;border:1px solid #F09595;border-radius:8px;padding:12px;margin-bottom:1rem;font-size:12px;color:#791F1F;word-break:break-all"></div>
       <div class="card" style="text-align:left;margin-bottom:1rem;background:#f0fff4;border-color:#c3e6cb">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
@@ -570,46 +571,143 @@ async function finishInterview(){
       } else { resolve(rawBlob); }
     });
 
-    // Step 3: Convert blob to base64 for sending to backend
-    document.getElementById("upload-status-text").textContent="Preparing upload...";
-    var base64 = await new Promise(function(resolve, reject){
-      var reader = new FileReader();
-      reader.onloadend = function(){ resolve(reader.result.split(",")[1]); };
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-
-    // Step 4: Send to Netlify backend function — no Google login needed
-    document.getElementById("upload-status-text").textContent="Uploading your interview...";
+    // Step 3: Ready to upload directly to Google Drive via signed URL;
     var filename = studentName.replace(/\s+/g,"_")+"_KLA_interview_"+Date.now()+".webm";
-    var response = await fetch(UPLOAD_FUNCTION_URL, {
+    // Step 4: Ask Netlify function for a signed upload URL
+    document.getElementById("upload-status-text").textContent="Preparing upload session...";
+    var sessionResp = await fetch(UPLOAD_FUNCTION_URL, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
-        videoBase64: base64,
         filename: filename,
         studentName: studentName,
         programName: programName,
-        advisorEmail: ADVISOR_EMAIL
+        advisorEmail: ADVISOR_EMAIL,
+        fileSize: blob.size
       })
     });
 
-    var result = await response.json();
-    var driveUrl = result.driveUrl || "";
+    var sessionText = await sessionResp.text();
+    console.log("Session response:", sessionResp.status, sessionText);
+
+    var sessionResult;
+    try { sessionResult = JSON.parse(sessionText); }
+    catch(e) { throw new Error("Invalid server response: " + sessionText.substring(0,200)); }
+
+    if(!sessionResp.ok || !sessionResult.success){
+      document.getElementById("upload-sub-text").textContent = "Error: " + (sessionResult.error || sessionText).substring(0,120);
+      document.getElementById("upload-status-text").textContent = "Upload setup failed";
+      document.getElementById("upload-progress-bar").style.background = "#A32D2D";
+      await new Promise(function(r){setTimeout(r,5000);});
+      throw new Error("Session error: " + (sessionResult.error || sessionText));
+    }
+
+    var uploadUrl = sessionResult.uploadUrl;
+    if(!uploadUrl) throw new Error("No upload URL received from server");
+
+    // Step 5: Upload video DIRECTLY to Google Drive using the signed URL
+    // This bypasses Netlify completely — no size limit!
+    document.getElementById("upload-status-text").textContent="Uploading your interview...";
+    document.getElementById("upload-sub-text").textContent="Please keep this window open";
+
+    // Use XMLHttpRequest for real progress tracking
+    var driveUrl = await new Promise(function(resolve, reject){
+      var xhr = new XMLHttpRequest();
+      xhr.open("PUT", uploadUrl, true);
+      xhr.setRequestHeader("Content-Type", "video/webm");
+
+      xhr.upload.onprogress = function(e){
+        if(e.lengthComputable){
+          var pct = Math.round(e.loaded / e.total * 100);
+          document.getElementById("upload-progress-bar").style.width = pct + "%";
+          document.getElementById("upload-pct").textContent = pct + "%";
+          if(pct >= 99){
+            document.getElementById("upload-status-text").textContent = "Finalising upload...";
+          }
+        }
+      };
+
+      xhr.onload = function(){
+        console.log("XHR upload status:", xhr.status);
+        console.log("XHR response:", xhr.responseText.substring(0,500));
+        if(xhr.status === 200 || xhr.status === 201){
+          try{
+            var resp = JSON.parse(xhr.responseText);
+            var fileId = resp.id;
+            console.log("File ID from response:", fileId);
+
+            if(!fileId){
+              // Try to extract file ID from the upload URL itself
+              var urlMatch = uploadUrl.match(/\/files\/([a-zA-Z0-9_-]+)/);
+              if(urlMatch) fileId = urlMatch[1];
+              console.log("File ID from URL:", fileId);
+            }
+
+            var viewLink = "https://drive.google.com/file/d/" + fileId + "/view";
+            if(resp.webViewLink) viewLink = resp.webViewLink;
+
+            console.log("View link:", viewLink);
+
+            // Call notify-advisor to share file with advisor
+            if(fileId){
+              fetch("/.netlify/functions/notify-advisor", {
+                method: "POST",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({
+                  fileId: fileId,
+                  advisorEmail: ADVISOR_EMAIL,
+                  studentName: studentName,
+                  programName: programName
+                })
+              }).then(function(r){
+                console.log("Notify advisor status:", r.status);
+                return r.json();
+              }).then(function(d){
+                console.log("Notify advisor result:", JSON.stringify(d));
+                resolve(d.driveUrl || viewLink);
+              }).catch(function(e){
+                console.error("Notify advisor error:", e);
+                resolve(viewLink);
+              });
+            } else {
+              console.warn("No file ID found — skipping notify-advisor");
+              resolve(viewLink);
+            }
+          } catch(e){
+            console.error("Parse error:", e, "Response:", xhr.responseText.substring(0,200));
+            resolve("");
+          }
+        } else {
+          console.error("Upload failed:", xhr.status, xhr.responseText);
+          reject(new Error("Upload failed with status " + xhr.status + ": " + xhr.responseText.substring(0,200)));
+        }
+      };
+
+      xhr.onerror = function(){ reject(new Error("Network error during upload. Please check your internet connection.")); };
+      xhr.ontimeout = function(){ reject(new Error("Upload timed out. Please try again.")); };
+      xhr.timeout = 600000; // 10 minute timeout for large files
+
+      xhr.send(blob);
+    });
 
     hideUploadOverlay();
     document.getElementById("done-name").textContent=studentName;
     showStep("step-submit");
 
-    // Step 5: Send advisor email notification
+    // Step 6: Send advisor email notification
     if(driveUrl) sendAdvisorNotification(studentName, programName, driveUrl, filename);
 
   }catch(err){
     hideUploadOverlay();
     console.error("Upload failed:", err);
     document.getElementById("done-name").textContent=studentName;
+
+    // Show error message on completion screen
+    var errBox = document.getElementById("upload-error-box");
+    if(errBox){ errBox.style.display="block"; errBox.textContent = "Upload error: " + err.message; }
+
     showStep("step-submit");
-    sendAdvisorNotification(studentName, programName, "Upload encountered an issue — please check Google Drive manually.", "");
+    sendAdvisorNotification(studentName, programName, "Upload failed: " + err.message, "");
   }
 }
 
