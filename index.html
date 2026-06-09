@@ -703,8 +703,10 @@ async function finishInterview(){
     document.getElementById("done-name").textContent=studentName;
     showStep("step-submit");
 
-    // Step 6: Send advisor email notification
-    if(driveUrl) sendAdvisorNotification(studentName, programName, driveUrl, filename);
+    // Step 6: Always send advisor email notification
+    // Send regardless of driveUrl — video is in Drive even if URL not returned
+    var notifyUrl = driveUrl || "https://drive.google.com/drive/folders/";
+    sendAdvisorNotification(studentName, programName, notifyUrl, filename);
 
   }catch(err){
     hideUploadOverlay();
@@ -753,10 +755,16 @@ function hideUploadOverlay(){
 // ADVISOR EMAIL NOTIFICATION
 // ============================================================
 function sendAdvisorNotification(sName, sProgram, videoUrl, filename){
-  if(EMAILJS_SERVICE_ID==="EMAILJS_SERVICE_ID") return;
-  emailjs.init(EMAILJS_PUBLIC_KEY);
+  if(EMAILJS_SERVICE_ID==="EMAILJS_SERVICE_ID"){
+    console.warn("EmailJS not configured");
+    return;
+  }
+  try {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+  } catch(e){ console.warn("EmailJS init warning:", e); }
   var now=new Date();
   var dateStr=now.toLocaleDateString()+" at "+now.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+  console.log("Sending advisor notification to:", ADVISOR_EMAIL);
   emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID,{
     to_email: ADVISOR_EMAIL,
     student_name: sName,
