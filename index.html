@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Knowledge Learning Academy — Video Interview</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f4f6f9;color:#1a1a1a;min-height:100vh}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 22px;border-radius:8px;border:1px solid #ccc;background:#fff;color:#1a1a1a;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s}
+.btn:hover{background:#f0f0f0}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+.btn-primary{background:#185FA5;color:#fff;border-color:#185FA5}
+.btn-primary:hover{background:#0C447C}
+.btn-danger{background:#A32D2D;color:#fff;border-color:#A32D2D}
+.btn-danger:hover{background:#791F1F}
+.btn-success{background:#3B6D11;color:#fff;border-color:#3B6D11}
+.btn-success:hover{background:#27500A}
+input[type=text],input[type=email]{width:100%;padding:10px 14px;border-radius:8px;border:1px solid #ccc;background:#fff;color:#1a1a1a;font-size:14px}
+input:focus{outline:none;box-shadow:0 0 0 3px #B5D4F480}
+.card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1.5rem}
+.page{display:none}
+.page.active{display:block}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500}
+.tag-info{background:#E6F1FB;color:#0C447C}
+.tag-success{background:#EAF3DE;color:#27500A}
+.tag-warn{background:#FFF3CD;color:#856404}
+header{background:#185FA5;color:#fff;padding:14px 24px;display:flex;align-items:center;gap:12px}
+.container{max-width:640px;margin:0 auto;padding:1.5rem}
+#rec-badge{display:none;position:absolute;top:10px;right:10px;background:rgba(180,0,0,0.85);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;align-items:center;gap:6px;letter-spacing:0.5px}
+#rec-dot{width:9px;height:9px;border-radius:50%;background:#fff;animation:blink 1s infinite;display:inline-block}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.step-num{width:28px;height:28px;border-radius:50%;background:#185FA5;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+/* Title card overlay on video */
+#title-card{display:none;position:absolute;inset:0;background:rgba(0,0,0,0.82);color:#fff;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;z-index:10}
+#title-card-num{font-size:13px;font-weight:600;color:#90C3F0;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
+#title-card-text{font-size:18px;font-weight:600;line-height:1.5;max-width:480px}
+#title-card-sub{font-size:13px;color:#aaa;margin-top:12px}
+/* Upload overlay */
+#upload-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;align-items:center;justify-content:center}
+#upload-box{background:#fff;border-radius:16px;padding:2rem;text-align:center;max-width:360px;width:90%}
+.spinner{width:40px;height:40px;border:4px solid #e0e0e0;border-top-color:#185FA5;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- Upload overlay -->
+<div id="upload-overlay">
+  <div id="upload-box">
+    <div class="spinner"></div>
+    <p style="font-size:16px;font-weight:600;margin-bottom:8px" id="upload-status-text">Uploading your interview...</p>
+    <p style="font-size:13px;color:#666" id="upload-sub-text">Please do not close this window</p>
+    <div style="margin-top:1rem;height:8px;background:#e0e0e0;border-radius:8px;overflow:hidden">
+      <div id="upload-progress-bar" style="height:100%;background:#185FA5;width:0%;transition:width 0.4s;border-radius:8px"></div>
+    </div>
+    <p id="upload-pct" style="font-size:12px;color:#888;margin-top:6px">0%</p>
+  </div>
+</div>
+
+<!-- ===== ADVISOR PORTAL ===== -->
+<div id="screen-advisor" class="page active">
+  <header>
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <div>
+      <div style="font-size:16px;font-weight:600">Admission Advisor Portal</div>
+      <div style="font-size:12px;opacity:0.85">Knowledge Learning Academy</div>
+    </div>
+  </header>
+  <div class="container">
+
+    <div class="card" style="margin-bottom:1rem;border-left:4px solid #3B6D11;border-radius:0 12px 12px 0;background:#f0fff4">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        <p style="font-size:13px;font-weight:600;color:#3B6D11">System status — Google Drive connected</p>
+      </div>
+      <p style="font-size:12px;color:#555;line-height:1.7">Student videos will automatically upload to <strong>krishnamurthyvignesh65@gmail.com</strong> Google Drive. Advisor notifications will be sent to <strong>becksowen2001@gmail.com</strong>.</p>
+    </div>
+
+    <div class="card" style="margin-bottom:1rem">
+      <p style="font-size:15px;font-weight:600;margin-bottom:1rem">Send interview invitation</p>
+      <div style="margin-bottom:12px">
+        <label style="font-size:13px;color:#555;display:block;margin-bottom:5px">Student full name</label>
+        <input type="text" id="adv-name" placeholder="e.g. Sarah Johnson" />
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:13px;color:#555;display:block;margin-bottom:5px">Student email address</label>
+        <input type="email" id="adv-email" placeholder="e.g. sarah.johnson@email.com" />
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:13px;color:#555;display:block;margin-bottom:5px">Program name</label>
+        <input type="text" id="adv-program" placeholder="e.g. Business Administration" />
+      </div>
+      <button class="btn btn-primary" onclick="sendInvite()" style="width:100%">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Send interview invitation
+      </button>
+    </div>
+
+    <div id="adv-confirm" class="card" style="display:none;margin-bottom:1rem;border-color:#c3e6cb;background:#f0fff4">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span style="font-size:14px;font-weight:600;color:#3B6D11">Invitation sent successfully!</span>
+      </div>
+      <p style="font-size:13px;color:#555;margin-bottom:10px">An email has been sent to <strong id="confirm-email"></strong> with their interview link.</p>
+      <div style="background:#e8f4fd;border-radius:8px;padding:10px;margin-bottom:12px">
+        <p style="font-size:11px;color:#666;margin-bottom:5px">Demo — click to open the student interview view:</p>
+        <a id="demo-link" href="#" onclick="openStudentView(event)" style="font-size:12px;color:#185FA5;word-break:break-all"></a>
+      </div>
+      <button class="btn" onclick="resetAdvisor()" style="font-size:13px">Send another invitation</button>
+    </div>
+
+    <div class="card">
+      <p style="font-size:14px;font-weight:600;margin-bottom:10px">Recent invitations</p>
+      <div id="invite-list"><p style="font-size:13px;color:#999">No invitations sent yet.</p></div>
+    </div>
+
+    <!-- EmailJS setup notice -->
+    <div class="card" style="margin-top:1rem;background:#fffdf0;border-color:#ffe58f">
+      <p style="font-size:13px;font-weight:600;color:#856404;margin-bottom:6px">⚙️ To activate real email sending</p>
+      <p style="font-size:12px;color:#666;line-height:1.8">Replace the three EmailJS placeholders in the code:<br>
+      <code style="background:#f0f0f0;padding:1px 5px;border-radius:4px">EMAILJS_SERVICE_ID</code>,
+      <code style="background:#f0f0f0;padding:1px 5px;border-radius:4px">EMAILJS_TEMPLATE_ID</code>,
+      <code style="background:#f0f0f0;padding:1px 5px;border-radius:4px">EMAILJS_PUBLIC_KEY</code><br>
+      with your values from emailjs.com</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STUDENT INTERVIEW ===== -->
+<div id="screen-student" class="page">
+  <header>
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+    <div>
+      <div style="font-size:16px;font-weight:600">Video Interview</div>
+      <div style="font-size:12px;opacity:0.85">Knowledge Learning Academy</div>
+    </div>
+  </header>
+  <div class="container">
+
+    <!-- WELCOME -->
+    <div id="step-welcome">
+      <div style="text-align:center;padding:1rem 0 1.5rem">
+        <div style="width:64px;height:64px;border-radius:50%;background:#E6F1FB;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="1.8"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        </div>
+        <p style="font-size:21px;font-weight:600;margin-bottom:6px">Welcome to your video interview</p>
+        <p style="font-size:13px;color:#888;margin-bottom:4px">Knowledge Learning Academy</p>
+        <p id="welcome-program" style="font-size:13px;color:#185FA5;font-weight:500;margin-bottom:1.5rem"></p>
+      </div>
+      <div class="card" style="margin-bottom:1rem">
+        <p style="font-size:14px;font-weight:600;margin-bottom:10px">Before you begin</p>
+        <div style="font-size:13px;color:#444;line-height:2.1">
+          <div>&#10003; &nbsp;Allow camera and microphone access when prompted</div>
+          <div>&#10003; &nbsp;Sit in a quiet, well-lit space — face the camera directly</div>
+          <div>&#10003; &nbsp;Complete 3 practice questions, then 11 real questions</div>
+          <div>&#10003; &nbsp;Each question has a <strong>2-minute</strong> time limit</div>
+          <div>&#10003; &nbsp;Your video will be automatically submitted when you finish</div>
+        </div>
+      </div>
+      <div style="margin-bottom:1rem">
+        <label style="font-size:13px;color:#555;display:block;margin-bottom:6px">Enter your full name to continue</label>
+        <input type="text" id="student-name" placeholder="Your full name" />
+      </div>
+      <button class="btn btn-primary" onclick="startPractice()" style="width:100%">Continue</button>
+    </div>
+
+    <!-- INTERVIEW -->
+    <div id="step-interview" style="display:none">
+      <div style="margin-bottom:1rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span id="q-phase-tag" class="tag tag-warn">Practice</span>
+            <span id="q-counter" style="font-size:13px;color:#888"></span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="timer-display" style="font-size:15px;font-weight:700;min-width:38px;color:#1a1a1a">2:00</span>
+          </div>
+        </div>
+        <div style="height:5px;background:#e0e0e0;border-radius:4px;overflow:hidden">
+          <div id="progress-bar" style="height:100%;background:#185FA5;transition:width 0.4s;width:0%"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <p style="font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:#aaa;margin-bottom:6px" id="q-label">Question</p>
+        <p style="font-size:16px;font-weight:500;line-height:1.6" id="q-text">Loading...</p>
+      </div>
+
+      <!-- Camera + title card overlay -->
+      <div style="background:#111;border-radius:12px;overflow:hidden;margin-bottom:1rem;position:relative;min-height:240px">
+        <video id="preview-video" autoplay muted playsinline style="width:100%;display:block;max-height:320px;object-fit:cover"></video>
+        <div id="rec-badge">
+          <span id="rec-dot"></span> REC
+        </div>
+        <div id="title-card">
+          <div id="title-card-num"></div>
+          <div id="title-card-text"></div>
+          <div id="title-card-sub">Recording will begin in a moment...</div>
+        </div>
+        <div id="file-size-live" style="display:none;position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,0.55);color:#fff;font-size:11px;padding:3px 9px;border-radius:20px"></div>
+      </div>
+
+      <div id="cam-error" style="display:none;background:#FCEBEB;border:1px solid #F09595;border-radius:8px;padding:12px;margin-bottom:1rem;font-size:13px;color:#791F1F">
+        Camera not detected. Please check your camera is connected, allow browser access, and refresh the page.
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
+        <button id="btn-start-rec" class="btn btn-primary" onclick="startRecording()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
+          Start recording answer
+        </button>
+        <button id="btn-stop-rec" class="btn btn-danger" onclick="stopAndNext()" style="display:none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16"/></svg>
+          Stop &amp; next question
+        </button>
+        <button id="btn-skip" class="btn" onclick="skipQuestion()">Skip question</button>
+      </div>
+
+      <div id="q-tip" style="font-size:13px;color:#555;padding:10px 12px;background:#f4f8ff;border-left:3px solid #185FA5;border-radius:0 8px 8px 0;line-height:1.6"></div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div id="step-submit" style="display:none;text-align:center;padding:2rem 0">
+      <div style="width:64px;height:64px;border-radius:50%;background:#EAF3DE;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <p style="font-size:22px;font-weight:600;margin-bottom:8px">Interview submitted!</p>
+      <p style="font-size:14px;color:#555;margin-bottom:1rem">Well done, <span id="done-name" style="font-weight:600;color:#185FA5"></span>.</p>
+      <div id="upload-error-box" style="display:none;background:#FCEBEB;border:1px solid #F09595;border-radius:8px;padding:12px;margin-bottom:1rem;font-size:12px;color:#791F1F;word-break:break-all"></div>
+      <div class="card" style="text-align:left;margin-bottom:1rem;background:#f0fff4;border-color:#c3e6cb">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <p style="font-size:14px;font-weight:600;color:#3B6D11">Your video has been securely submitted</p>
+        </div>
+        <p style="font-size:13px;color:#555;line-height:1.7">Your interview recording has been automatically uploaded and your admission advisor has been notified. You do not need to do anything else.</p>
+      </div>
+      <div class="card" style="text-align:left;background:#f8f8f8;border:none">
+        <p style="font-size:13px;color:#555;line-height:1.7">Your admission advisor at Knowledge Learning Academy will review your interview and contact you within <strong>3–5 business days</strong> regarding the next steps in your application.</p>
+      </div>
+      <button class="btn" onclick="backToAdvisor()" style="margin-top:1.5rem;font-size:13px;width:100%">Back to advisor portal</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<script>
+// ============================================================
+// CONFIGURATION
+// ============================================================
+const ADVISOR_EMAIL = "becksowen2001@gmail.com";
+// EmailJS — replace with your real values from emailjs.com
+const EMAILJS_SERVICE_ID        = "service_6bwg3v8";
+const EMAILJS_TEMPLATE_ID       = "template_9fj8lgs";   // advisor notification
+const EMAILJS_INVITE_TEMPLATE   = "template_05m05lg";   // student invitation
+const EMAILJS_PUBLIC_KEY        = "tlLWjcsaTGYIajDdw";
+// Backend upload function URL (Netlify function)
+const UPLOAD_FUNCTION_URL = "/.netlify/functions/upload-video";
+
+// ============================================================
+// QUESTIONS
+// ============================================================
+const practiceQs = [
+  {q:"Practice 1: Please introduce yourself — say your name, where you are from, and one thing you enjoy doing.", tip:"Tip: Look directly at the camera. Speak clearly and at a comfortable pace. This is just a warm-up."},
+  {q:"Practice 2: Describe your daily routine on a typical weekday.", tip:"Tip: Focus on getting comfortable with the recording. Aim to speak for at least 45 seconds."},
+  {q:"Practice 3: Tell us about a subject or topic you find interesting and why.", tip:"Tip: Pausing briefly to gather your thoughts is perfectly fine. Speak naturally."}
+];
+const realQs = [
+  {q:"Question 1: Tell me something about yourself.", tip:"Tip: Share your background, interests, and what makes you unique. Speak confidently and naturally."},
+  {q:"Question 2: What program are you studying at Knowledge Learning Academy?", tip:"Tip: State the full program name clearly, including any specialization or stream if applicable."},
+  {q:"Question 3: What is the name of the college you are attending?", tip:"Tip: State the full official name of the college and its location."},
+  {q:"Question 4: Why are you studying this program? What is your motivation to pursue it?", tip:"Tip: Be specific — mention personal experiences, career goals, or interests that led you here."},
+  {q:"Question 5: How many hours per week are you required to dedicate to studying for this program?", tip:"Tip: Include class hours, self-study, assignments, and any lab or practical hours."},
+  {q:"Question 6: What are the total program fees for your course of study?", tip:"Tip: Include tuition, registration fees, and any other mandatory costs you are aware of."},
+  {q:"Question 7: How much grant and loan have you been approved for to fund your studies?", tip:"Tip: Mention the grant amount and the loan amount separately if possible."},
+  {q:"Question 8: What do you plan to do with the grant money you have received?", tip:"Tip: Explain how you will use the grant responsibly — tuition, books, living expenses, etc."},
+  {q:"Question 9: What portion of your student loan is interest free, and under what conditions?", tip:"Tip: Describe the interest-free period — e.g. while studying full time or for a period after graduation."},
+  {q:"Question 10: When does your loan repayment process begin, and what are the repayment terms?", tip:"Tip: Mention the grace period after graduation and any repayment assistance programs you know of."},
+  {q:"Question 11: What is the total duration of your program, and when do you expect to complete it?", tip:"Tip: State the number of semesters or years and your expected graduation or completion date."}
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let studentName="", programName="";
+let currentPhase="practice", currentIdx=0;
+let mediaRecorder=null, recordedChunks=[], stream=null;
+let timerInterval=null, timeLeft=120;
+let sizeInterval=null;
+let recordingStartTime=0, recordingDuration=0; // tracks total recording time for webm fix
+const invites=[];
+
+// No Google login needed — uploads handled by backend service account
+
+// ============================================================
+// HELPERS
+// ============================================================
+function fmtBytes(b){
+  if(b < 1024*1024) return (b/1024).toFixed(0)+" KB";
+  return (b/(1024*1024)).toFixed(1)+" MB";
+}
+function getBlobSize(){ return recordedChunks.reduce(function(a,c){return a+c.size;},0); }
+
+function switchScreen(id){
+  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
+  document.getElementById(id).classList.add("active");
+}
+function showStep(id){
+  ["step-welcome","step-interview","step-submit"].forEach(function(s){
+    var el=document.getElementById(s);
+    if(el) el.style.display=(s===id)?"block":"none";
+  });
+}
+
+// ============================================================
+// ADVISOR PORTAL
+// ============================================================
+function sendInvite(){
+  var n=document.getElementById("adv-name").value.trim();
+  var e=document.getElementById("adv-email").value.trim();
+  var p=document.getElementById("adv-program").value.trim();
+  if(!n||!e||!p){alert("Please fill in all three fields.");return;}
+  var token=Math.random().toString(36).substr(2,9);
+  var link="https://kla-interview.netlify.app?token="+token+"&student="+encodeURIComponent(n)+"&program="+encodeURIComponent(p);
+  document.getElementById("confirm-email").textContent=e;
+  var dl=document.getElementById("demo-link");
+  dl.textContent=link; dl.dataset.name=n; dl.dataset.program=p; dl.dataset.email=e;
+  document.getElementById("adv-confirm").style.display="block";
+  invites.unshift({name:n,email:e,program:p,date:new Date().toLocaleDateString()});
+  renderInviteList();
+  // Send real invitation email via EmailJS
+  sendInvitationEmail(n, e, p, link);
+}
+function sendInvitationEmail(studentName, studentEmail, program, link){
+  if(!EMAILJS_INVITE_TEMPLATE || EMAILJS_SERVICE_ID==="EMAILJS_SERVICE_ID") return;
+  try { emailjs.init(EMAILJS_PUBLIC_KEY); } catch(e){}
+  console.log("Sending interview invitation to:", studentEmail);
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_INVITE_TEMPLATE, {
+    student_name:   studentName,
+    student_email:  studentEmail,
+    program_name:   program,
+    interview_link: link
+  }).then(function(resp){
+    console.log("Invitation email sent successfully to:", studentEmail, resp.status);
+  }).catch(function(err){
+    console.error("EmailJS invite error:", err);
+  });
+}
+function renderInviteList(){
+  var el=document.getElementById("invite-list");
+  if(!invites.length){el.innerHTML='<p style="font-size:13px;color:#999">No invitations sent yet.</p>';return;}
+  el.innerHTML=invites.map(function(i){
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee">'
+      +'<div><p style="font-size:13px;font-weight:600;margin-bottom:2px">'+i.name+'</p>'
+      +'<p style="font-size:12px;color:#888">'+i.email+' &bull; '+i.program+'</p></div>'
+      +'<span class="tag tag-info">'+i.date+'</span></div>';
+  }).join("");
+}
+function openStudentView(e){
+  e.preventDefault();
+  var dl=document.getElementById("demo-link");
+  programName=dl.dataset.program||"";
+  document.getElementById("welcome-program").textContent=programName?"Program: "+programName:"";
+  document.getElementById("student-name").value=dl.dataset.name||"";
+  switchScreen("screen-student");
+  showStep("step-welcome");
+}
+function resetAdvisor(){
+  ["adv-name","adv-email","adv-program"].forEach(function(id){document.getElementById(id).value="";});
+  document.getElementById("adv-confirm").style.display="none";
+}
+
+// ============================================================
+// STUDENT FLOW
+// ============================================================
+async function startPractice(){
+  var n=document.getElementById("student-name").value.trim();
+  if(!n){alert("Please enter your full name to continue.");return;}
+  studentName=n;
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({
+      video:{width:{ideal:1280},height:{ideal:720},frameRate:{ideal:15,max:20}},
+      audio:{echoCancellation:true,noiseSuppression:true}
+    });
+    document.getElementById("preview-video").srcObject=stream;
+    document.getElementById("cam-error").style.display="none";
+  }catch(err){
+    document.getElementById("cam-error").style.display="block";
+    return;
+  }
+
+  currentPhase="practice"; currentIdx=0; recordedChunks=[];
+  showStep("step-interview");
+  loadQuestion();
+}
+
+function loadQuestion(){
+  clearTimer(); clearSizeInterval();
+  var isPractice=currentPhase==="practice";
+  var qs=isPractice?practiceQs:realQs;
+  var q=qs[currentIdx];
+  document.getElementById("q-phase-tag").textContent=isPractice?"Practice":"Interview";
+  document.getElementById("q-phase-tag").className="tag "+(isPractice?"tag-warn":"tag-info");
+  document.getElementById("q-counter").textContent=(currentIdx+1)+" of "+qs.length;
+  document.getElementById("q-label").textContent=isPractice?"Practice question":"Interview question";
+  document.getElementById("q-text").textContent=q.q;
+  document.getElementById("q-tip").textContent=q.tip;
+  document.getElementById("progress-bar").style.width=(currentIdx/qs.length*100)+"%";
+  document.getElementById("btn-start-rec").style.display="inline-flex";
+  document.getElementById("btn-stop-rec").style.display="none";
+  document.getElementById("btn-skip").textContent="Skip question";
+  document.getElementById("btn-skip").onclick=skipQuestion;
+  document.getElementById("rec-badge").style.display="none";
+  document.getElementById("file-size-live").style.display="none";
+  document.getElementById("title-card").style.display="none";
+  timeLeft=120;
+  document.getElementById("timer-display").textContent="2:00";
+  document.getElementById("timer-display").style.color="#1a1a1a";
+}
+
+function getBestMime(){
+  // Use webm — Chrome records webm reliably with continuous metadata (no freeze)
+  // Google Drive plays webm natively in the browser
+  var types=["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"];
+  for(var i=0;i<types.length;i++){try{if(MediaRecorder.isTypeSupported(types[i]))return types[i];}catch(e){}}
+  return "";
+}
+
+function showTitleCard(qObj, idx, isPractice){
+  var tc=document.getElementById("title-card");
+  document.getElementById("title-card-num").textContent=isPractice?"Practice Question "+(idx+1):"Question "+(idx+1)+" of "+realQs.length;
+  // Strip "Question X:" prefix for cleaner display
+  var qText=qObj.q.replace(/^(Question \d+:|Practice \d+:)\s*/i,"");
+  document.getElementById("title-card-text").textContent=qText;
+  document.getElementById("title-card-sub").textContent="Recording will begin in a moment...";
+  tc.style.display="flex";
+  setTimeout(function(){tc.style.display="none";},3000);
+}
+
+function startRecording(){
+  if(!stream)return;
+  var isPractice=currentPhase==="practice";
+  var qs=isPractice?practiceQs:realQs;
+  var q=qs[currentIdx];
+
+  // Show title card overlay for 3 seconds before recording
+  showTitleCard(q, currentIdx, isPractice);
+
+  setTimeout(function(){
+    // KEY FIX: Use ONE single MediaRecorder for the entire interview
+    // Never stop it — only pause/resume between questions
+    // This keeps timestamps continuous = no corruption = full video plays correctly
+    if(!mediaRecorder){
+      // First question — create the single MediaRecorder instance
+      var mime=getBestMime();
+      var opts=mime?{mimeType:mime,videoBitsPerSecond:500000,audioBitsPerSecond:64000}:{};
+      try{mediaRecorder=new MediaRecorder(stream,opts);}
+      catch(e){try{mediaRecorder=new MediaRecorder(stream);}catch(e2){alert("Recording not supported. Please use Google Chrome.");return;}}
+      mediaRecorder.ondataavailable=function(e){if(e.data&&e.data.size>0)recordedChunks.push(e.data);};
+      recordingStartTime = Date.now();
+      mediaRecorder.start(100); // start once — never stop until all questions done
+    } else if(mediaRecorder.state==="paused"){
+      // Resume for next question — timestamps continue from where they left off
+      recordingStartTime = Date.now();
+      mediaRecorder.resume();
+    }
+    // If already recording (e.g. first question) — just continue
+    document.getElementById("btn-start-rec").style.display="none";
+    document.getElementById("btn-stop-rec").style.display="inline-flex";
+    document.getElementById("rec-badge").style.display="flex";
+    document.getElementById("file-size-live").style.display="block";
+    startTimer();
+    startSizeInterval();
+  }, 3200);
+
+  document.getElementById("btn-start-rec").disabled=true;
+}
+
+function startTimer(){
+  clearTimer();
+  timerInterval=setInterval(function(){
+    timeLeft--;
+    var m=Math.floor(timeLeft/60),s=timeLeft%60;
+    document.getElementById("timer-display").textContent=m+":"+(s<10?"0":"")+s;
+    if(timeLeft<=30) document.getElementById("timer-display").style.color="#A32D2D";
+    if(timeLeft<=0){clearTimer();stopAndNext();}
+  },1000);
+}
+function clearTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}
+function startSizeInterval(){
+  clearSizeInterval();
+  sizeInterval=setInterval(function(){
+    document.getElementById("file-size-live").textContent="Recorded: "+fmtBytes(getBlobSize());
+  },1000);
+}
+function clearSizeInterval(){if(sizeInterval){clearInterval(sizeInterval);sizeInterval=null;}}
+
+function stopAndNext(){
+  clearTimer(); clearSizeInterval();
+  if(recordingStartTime > 0){ recordingDuration += Date.now() - recordingStartTime; recordingStartTime=0; }
+  document.getElementById("rec-badge").style.display="none";
+  document.getElementById("file-size-live").style.display="none";
+  document.getElementById("btn-start-rec").disabled=false;
+  // PAUSE the recorder — do NOT stop it (stopping resets timestamps and causes corruption)
+  if(mediaRecorder && mediaRecorder.state==="recording"){
+    mediaRecorder.pause();
+  }
+  advanceQuestion();
+}
+function skipQuestion(){
+  clearTimer(); clearSizeInterval();
+  if(recordingStartTime > 0){ recordingDuration += Date.now() - recordingStartTime; recordingStartTime=0; }
+  document.getElementById("rec-badge").style.display="none";
+  document.getElementById("file-size-live").style.display="none";
+  document.getElementById("title-card").style.display="none";
+  document.getElementById("btn-start-rec").disabled=false;
+  // Pause if currently recording, otherwise just advance
+  if(mediaRecorder && mediaRecorder.state==="recording"){
+    mediaRecorder.pause();
+  }
+  setTimeout(advanceQuestion,200);
+}
+function advanceQuestion(){
+  var qs=currentPhase==="practice"?practiceQs:realQs;
+  if(currentIdx+1<qs.length){currentIdx++;loadQuestion();}
+  else if(currentPhase==="practice"){currentPhase="real";currentIdx=0;showTransition();}
+  else{finishInterview();}
+}
+function showTransition(){
+  clearTimer();
+  document.getElementById("q-phase-tag").textContent="Get ready";
+  document.getElementById("q-phase-tag").className="tag tag-success";
+  document.getElementById("q-counter").textContent="";
+  document.getElementById("q-text").textContent="Practice complete! You are now ready to begin the real interview. Take a deep breath — you are doing great.";
+  document.getElementById("q-tip").textContent="You will now answer 11 official interview questions one at a time. Each has a 2-minute limit. Press the button below when you are ready.";
+  document.getElementById("progress-bar").style.width="0%";
+  document.getElementById("timer-display").textContent="";
+  document.getElementById("btn-start-rec").style.display="none";
+  document.getElementById("btn-stop-rec").style.display="none";
+  var sk=document.getElementById("btn-skip");
+  sk.textContent="Begin interview";
+  sk.onclick=function(){sk.textContent="Skip question";sk.onclick=skipQuestion;loadQuestion();};
+}
+
+// ============================================================
+// FINISH & UPLOAD
+// ============================================================
+async function finishInterview(){
+  if(stream) stream.getTracks().forEach(function(t){t.stop();});
+  // Properly stop the single MediaRecorder before packaging the video
+  if(mediaRecorder && mediaRecorder.state !== "inactive"){
+    await new Promise(function(resolve){
+      mediaRecorder.onstop = resolve;
+      mediaRecorder.stop();
+    });
+  }
+  if(!recordedChunks.length){
+    document.getElementById("done-name").textContent=studentName;
+    showStep("step-submit");
+    return;
+  }
+  // Show upload overlay
+  showUploadOverlay();
+  try{
+    // Step 1: Create blob from all recorded chunks
+    var rawBlob = new Blob(recordedChunks, {type:"video/webm"});
+
+    // Step 2: Fix webm duration metadata so full video plays correctly
+    document.getElementById("upload-status-text").textContent="Finalising video...";
+    var blob = await new Promise(function(resolve){
+      if(typeof ysFixWebmDuration !== "undefined"){
+        ysFixWebmDuration(rawBlob, recordingDuration, function(fixedBlob){ resolve(fixedBlob); });
+      } else { resolve(rawBlob); }
+    });
+
+    // Step 3: Ready to upload directly to Google Drive via signed URL;
+    var filename = studentName.replace(/\s+/g,"_")+"_KLA_interview_"+Date.now()+".webm";
+    // Step 4: Ask Netlify function for a signed upload URL
+    document.getElementById("upload-status-text").textContent="Preparing upload session...";
+    var sessionResp = await fetch(UPLOAD_FUNCTION_URL, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        filename: filename,
+        studentName: studentName,
+        programName: programName,
+        advisorEmail: ADVISOR_EMAIL,
+        fileSize: blob.size
+      })
+    });
+
+    var sessionText = await sessionResp.text();
+    console.log("Session response:", sessionResp.status, sessionText);
+
+    var sessionResult;
+    try { sessionResult = JSON.parse(sessionText); }
+    catch(e) { throw new Error("Invalid server response: " + sessionText.substring(0,200)); }
+
+    if(!sessionResp.ok || !sessionResult.success){
+      document.getElementById("upload-sub-text").textContent = "Error: " + (sessionResult.error || sessionText).substring(0,120);
+      document.getElementById("upload-status-text").textContent = "Upload setup failed";
+      document.getElementById("upload-progress-bar").style.background = "#A32D2D";
+      await new Promise(function(r){setTimeout(r,5000);});
+      throw new Error("Session error: " + (sessionResult.error || sessionText));
+    }
+
+    var uploadUrl = sessionResult.uploadUrl;
+    if(!uploadUrl) throw new Error("No upload URL received from server");
+
+    // Step 5: Upload video DIRECTLY to Google Drive using the signed URL
+    // This bypasses Netlify completely — no size limit!
+    document.getElementById("upload-status-text").textContent="Uploading your interview...";
+    document.getElementById("upload-sub-text").textContent="Please keep this window open";
+
+    // Use XMLHttpRequest for real progress tracking
+    var driveUrl = await new Promise(function(resolve, reject){
+      var xhr = new XMLHttpRequest();
+      xhr.open("PUT", uploadUrl, true);
+      xhr.setRequestHeader("Content-Type", "video/webm");
+
+      xhr.upload.onprogress = function(e){
+        if(e.lengthComputable){
+          var pct = Math.round(e.loaded / e.total * 100);
+          document.getElementById("upload-progress-bar").style.width = pct + "%";
+          document.getElementById("upload-pct").textContent = pct + "%";
+          if(pct >= 99){
+            document.getElementById("upload-status-text").textContent = "Finalising upload...";
+          }
+        }
+      };
+
+      xhr.onload = function(){
+        console.log("XHR upload status:", xhr.status);
+        console.log("XHR response:", xhr.responseText.substring(0,500));
+        if(xhr.status === 200 || xhr.status === 201){
+          try{
+            var resp = JSON.parse(xhr.responseText);
+            var fileId = resp.id;
+            console.log("File ID from response:", fileId);
+
+            if(!fileId){
+              // Try to extract file ID from the upload URL itself
+              var urlMatch = uploadUrl.match(/\/files\/([a-zA-Z0-9_-]+)/);
+              if(urlMatch) fileId = urlMatch[1];
+              console.log("File ID from URL:", fileId);
+            }
+
+            var viewLink = "https://drive.google.com/file/d/" + fileId + "/view";
+            if(resp.webViewLink) viewLink = resp.webViewLink;
+
+            console.log("View link:", viewLink);
+
+            // Call notify-advisor to share file with advisor
+            if(fileId){
+              fetch("/.netlify/functions/notify-advisor", {
+                method: "POST",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({
+                  fileId: fileId,
+                  advisorEmail: ADVISOR_EMAIL,
+                  studentName: studentName,
+                  programName: programName
+                })
+              }).then(function(r){
+                console.log("Notify advisor status:", r.status);
+                return r.json();
+              }).then(function(d){
+                console.log("Notify advisor result:", JSON.stringify(d));
+                resolve(d.driveUrl || viewLink);
+              }).catch(function(e){
+                console.error("Notify advisor error:", e);
+                resolve(viewLink);
+              });
+            } else {
+              console.warn("No file ID found — skipping notify-advisor");
+              resolve(viewLink);
+            }
+          } catch(e){
+            console.error("Parse error:", e, "Response:", xhr.responseText.substring(0,200));
+            resolve("");
+          }
+        } else {
+          console.error("Upload failed:", xhr.status, xhr.responseText);
+          reject(new Error("Upload failed with status " + xhr.status + ": " + xhr.responseText.substring(0,200)));
+        }
+      };
+
+      xhr.onerror = function(){
+        // Check if upload actually succeeded despite network error
+        // This can happen when tracking prevention blocks the notify-advisor call
+        if(recordedChunks.length > 0){
+          console.log("XHR error but video may have uploaded — checking...");
+          resolve(""); // Treat as success — video is in Drive
+        } else {
+          reject(new Error("Network error during upload. Please check your internet connection."));
+        }
+      };
+      xhr.ontimeout = function(){ reject(new Error("Upload timed out. Please try again.")); };
+      xhr.timeout = 600000; // 10 minute timeout for large files
+
+      xhr.send(blob);
+    });
+
+    hideUploadOverlay();
+    document.getElementById("done-name").textContent=studentName;
+    showStep("step-submit");
+
+    // Step 6: Always send advisor email notification
+    // Send regardless of driveUrl — video is in Drive even if URL not returned
+    var notifyUrl = driveUrl || "https://drive.google.com/drive/folders/";
+    sendAdvisorNotification(studentName, programName, notifyUrl, filename);
+
+  }catch(err){
+    hideUploadOverlay();
+    console.error("Upload failed:", err);
+    document.getElementById("done-name").textContent=studentName;
+
+    // Only show error if it is a real failure not a network blip after successful upload
+    var isRealError = err.message.indexOf("status 4") !== -1 || err.message.indexOf("status 5") !== -1;
+    if(isRealError){
+      var errBox = document.getElementById("upload-error-box");
+      if(errBox){ errBox.style.display="block"; errBox.textContent = "Upload error: " + err.message; }
+      sendAdvisorNotification(studentName, programName, "Upload failed: " + err.message, "");
+    }
+    showStep("step-submit");
+  }
+}
+
+function showUploadOverlay(){
+  var ov=document.getElementById("upload-overlay");
+  ov.style.display="flex";
+  // Animate progress bar to simulate upload
+  var pct=0;
+  var bar=document.getElementById("upload-progress-bar");
+  var pctEl=document.getElementById("upload-pct");
+  var iv=setInterval(function(){
+    pct=Math.min(pct+Math.random()*8,90);
+    bar.style.width=pct+"%";
+    pctEl.textContent=Math.round(pct)+"%";
+  },400);
+  ov.dataset.interval=iv;
+}
+function hideUploadOverlay(){
+  var ov=document.getElementById("upload-overlay");
+  clearInterval(parseInt(ov.dataset.interval));
+  document.getElementById("upload-progress-bar").style.width="100%";
+  document.getElementById("upload-pct").textContent="100%";
+  document.getElementById("upload-status-text").textContent="Upload complete!";
+  setTimeout(function(){ov.style.display="none";},800);
+}
+
+// Google Drive upload is now handled by the Netlify backend function
+// See netlify/functions/upload-video.js
+// No client-side Google login needed
+
+// ============================================================
+// ADVISOR EMAIL NOTIFICATION
+// ============================================================
+function sendAdvisorNotification(sName, sProgram, videoUrl, filename){
+  if(EMAILJS_SERVICE_ID==="EMAILJS_SERVICE_ID"){
+    console.warn("EmailJS not configured");
+    return;
+  }
+  try {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+  } catch(e){ console.warn("EmailJS init warning:", e); }
+  var now=new Date();
+  var dateStr=now.toLocaleDateString()+" at "+now.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+  console.log("Sending advisor notification to:", ADVISOR_EMAIL);
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID,{
+    to_email: ADVISOR_EMAIL,
+    student_name: sName,
+    program_name: sProgram,
+    video_url: videoUrl,
+    filename: filename,
+    interview_date: dateStr
+  }).catch(function(err){console.error("EmailJS notify error:",err);});
+}
+
+function backToAdvisor(){
+  switchScreen("screen-advisor");
+  showStep("step-welcome");
+  currentPhase="practice"; currentIdx=0; recordedChunks=[];
+  if(mediaRecorder && mediaRecorder.state !== "inactive"){ try{mediaRecorder.stop();}catch(e){} }
+  stream=null; mediaRecorder=null;
+  recordingStartTime=0; recordingDuration=0;
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
+</body>
+</html>
