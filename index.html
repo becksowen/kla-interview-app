@@ -781,6 +781,33 @@ function sendAdvisorNotification(sName, sProgram, videoUrl, filename){
   }).catch(function(err){console.error("EmailJS notify error:",err);});
 }
 
+// ============================================================
+// AUTO-DETECT STUDENT INTERVIEW LINK
+// When student clicks email link, URL contains ?token=...&student=...&program=...
+// Automatically switch to student interview view instead of showing advisor portal
+// ============================================================
+function checkUrlParams(){
+  var params = new URLSearchParams(window.location.search);
+  var token = params.get("token");
+  var student = params.get("student");
+  var program = params.get("program");
+
+  if(token && student){
+    // This is a student interview link — switch to student view automatically
+    programName = program || "";
+    document.getElementById("welcome-program").textContent = programName ? "Program: " + programName : "";
+    document.getElementById("student-name").value = student;
+    switchScreen("screen-student");
+    showStep("step-welcome");
+    console.log("Student interview link detected — switching to student view");
+  }
+}
+
+// Run on page load
+window.addEventListener("load", function(){
+  checkUrlParams();
+});
+
 function backToAdvisor(){
   switchScreen("screen-advisor");
   showStep("step-welcome");
